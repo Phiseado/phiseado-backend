@@ -1,7 +1,11 @@
-from aiohttp import request
 import requests
+import json
 
-url = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=APIKEY"
+#Loading the config file
+with open('config.json') as file:
+    config = json.load(file)
+
+url = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + config["ApiKey"]
 body = {
     "client": {
       "clientId":      "yourcompanyname",
