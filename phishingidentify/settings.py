@@ -12,19 +12,17 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import json
+import os
 
-#Loading the config file
-with open('config.json') as file:
-    config = json.load(file)
+try:
+    with open('config.json') as file:
+        config = json.load(file)
+        SECRET_KEY = config["SecretKey"]
+except FileNotFoundError:
+    SECRET_KEY = os.environ.get("SecretKey")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-SECRET_KEY = config["SecretKey"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

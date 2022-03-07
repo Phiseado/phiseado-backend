@@ -1,11 +1,16 @@
 import requests
 import json
+import os
 
-#Loading the config file
-with open('config.json') as file:
-    config = json.load(file)
+try:
+  with open('config.json') as file:
+      config = json.load(file)
+      API_KEY = config["ApiKey"]
+except FileNotFoundError:
+  print("The specified file doesn't exist. Falling back to environment variables.")
+  API_KEY = os.environ.get("ApiKey")
 
-url = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + config["ApiKey"]
+url = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + API_KEY
 body = {
     "client": {
       "clientId":      "yourcompanyname",
