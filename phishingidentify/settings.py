@@ -19,7 +19,7 @@ try:
         config = json.load(file)
         SECRET_KEY = config["SecretKey"]
 except FileNotFoundError:
-    SECRET_KEY = os.environ.get("SecretKey")
+    SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

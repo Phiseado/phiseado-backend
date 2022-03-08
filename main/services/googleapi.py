@@ -8,7 +8,7 @@ try:
       API_KEY = config["ApiKey"]
 except FileNotFoundError:
   print("The specified file doesn't exist. Falling back to environment variables.")
-  API_KEY = os.environ.get("ApiKey")
+  API_KEY = os.environ.get("API_KEY")
 
 uri = "https://safebrowsing.googleapis.com/v4/threatMatches:find?key=" + API_KEY
 
