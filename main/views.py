@@ -22,6 +22,6 @@ class check_url_blacklist(generics.CreateAPIView):
             )
         else:
             return Response(
-                data={"result": (False, True)[phishing]}, 
+                data={"result": True if phishing else False}, 
                 status=HTTP_200_OK
             )
