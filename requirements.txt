@@ -7,3 +7,4 @@ dnspython==2.2.1
 python-whois
 google
 pandas
+scikit-learn
