@@ -6,10 +6,8 @@ from rest_framework.status import (
 )
 from . import serializers
 from django.views.decorators.csrf import csrf_exempt
-from .services import googleapi
-import re
+from .services import phishing_system
 
-# Create your views here.
 class check_url_blacklist(generics.CreateAPIView):
     serializer_class = serializers.CheckUrlSerializer
 
@@ -17,15 +15,13 @@ class check_url_blacklist(generics.CreateAPIView):
     def post(self, request):
         body = request.data
         message = body['message']
-        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
-        if len(url) > 0:
-            url = url[0]
-            result = googleapi.check_url(url)
-            return Response(
-                data={"result": (False, True)[result]}, 
-                status=HTTP_200_OK
-            )
-        else:
+        phishing = phishing_system.check_message(message)
+        if phishing is None:
             return Response( 
                 status=HTTP_400_BAD_REQUEST
+            )
+        else:
+            return Response(
+                data={"result": True if phishing else False}, 
+                status=HTTP_200_OK
             )
