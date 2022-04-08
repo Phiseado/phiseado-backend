@@ -65,8 +65,8 @@ def obtain_parameters_properties(url):
     return properties
 
 def obtain_extra_properties(url):
-    #asn_ip = delete from the csv
-    #qty_ip_resolved = delete from the csv
+    # asn_ip = delete from the csv
+    # qty_ip_resolved = delete from the csv
     # url_shortened = delete from csv
     domain = urlparse(url).netloc
     domain_spf = multithread.ThreadWithReturnValue(target=url_properties.domain_has_spf, args=[domain])
@@ -112,7 +112,7 @@ def get_properties_multithread(url):
     return [url_properties, domain_properties, directory_properties, filename_properties, parameters_properties]
 
 def predict_incoming_url(url):
-    from ..apps import MainConfig
+    from ..apps import URL_model
     
     incoming_url = []
     url_properties, domain_properties, directory_properties, filename_properties, parameters_properties = get_properties_multithread(url)
@@ -125,5 +125,5 @@ def predict_incoming_url(url):
     [incoming_url.append(property) for property in parameters_properties]
     [incoming_url.append(property) for property in extra_properties]
 
-    prediction = MainConfig.model.predict([incoming_url])
+    prediction = URL_model.predict([incoming_url])
     return prediction
