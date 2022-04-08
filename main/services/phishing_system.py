@@ -14,10 +14,9 @@ def check_message(message):
         prediction = url_model.predict_incoming_url(url)
         if prediction == 1:
             return True
-        #else:
-            # not working well
-        #    content = message.split()
-        #    content = [word for word in content if word != url]
-        #    content = " ".join(content)
-        #    prediction = content_model.predict_incoming_message(content)
-        #    return True if prediction == 1 else False
+        else:
+            content = message.split()
+            content = [word for word in content if word != url]
+            content = " ".join(content)
+            prediction = content_model.predict_incoming_message(content)
+            return True if prediction == 1 else False
