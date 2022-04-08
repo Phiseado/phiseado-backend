@@ -9,3 +9,4 @@ google
 pandas
 scikit-learn
 nltk
+coverage
