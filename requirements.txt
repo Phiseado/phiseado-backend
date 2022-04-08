@@ -8,3 +8,4 @@ python-whois
 google
 pandas
 scikit-learn
+nltk
