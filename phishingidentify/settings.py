@@ -89,6 +89,7 @@ DATABASES = {
         'NAME': 'phiseado',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
+        'PORT': '5432',
     }
 }
 
