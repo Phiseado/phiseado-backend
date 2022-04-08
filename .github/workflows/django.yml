@@ -36,3 +36,16 @@ jobs:
       with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: coverage.xml
+
+  deploy:
+    needs: build
+    if: ${{github.ref == 'refs/heads/main'}}
+    name: Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: AkhileshNS/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "phishing-alert-backend"
+          heroku_email: "phishingidentify@gmail.com"
