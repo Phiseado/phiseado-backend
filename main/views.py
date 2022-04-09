@@ -16,12 +16,7 @@ class check_url_blacklist(generics.CreateAPIView):
         body = request.data
         message = body['message']
         phishing = phishing_system.check_message(message)
-        if phishing is None:
-            return Response( 
-                status=HTTP_400_BAD_REQUEST
-            )
-        else:
-            return Response(
-                data={"result": True if phishing else False}, 
-                status=HTTP_200_OK
-            )
+        return Response(
+            data={"result": True if phishing else False}, 
+            status=HTTP_200_OK
+        )
