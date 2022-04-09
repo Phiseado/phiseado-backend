@@ -18,7 +18,7 @@ def check_message(message):
             content = message.split()
             content = [word for word in content if word != url]
             content = " ".join(content)
-            if len(content) != "":
+            if content != "":
                 prediction = content_model.predict_incoming_message(content)
                 return True if prediction == 1 else False
             else:
