@@ -7,6 +7,10 @@ from rest_framework.status import (
 from . import serializers
 from django.views.decorators.csrf import csrf_exempt
 from .services import phishing_system
+import re
+from .models import *
+import pytz
+from urllib.parse import urlparse
 
 class check_url_blacklist(generics.CreateAPIView):
     serializer_class = serializers.CheckUrlSerializer
@@ -25,3 +29,35 @@ class check_url_blacklist(generics.CreateAPIView):
                 data={"result": True if phishing else False}, 
                 status=HTTP_200_OK
             )
+
+class obtain_phishing_message(generics.CreateAPIView):
+    serializer_class = serializers.CheckUrlSerializer
+
+    @csrf_exempt
+    def post(self, request):
+        body = request.data
+        message = body['message']
+        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
+        iso_code = body['isoCode']
+        country_name = pytz.country_names[iso_code]
+        country = Country.objects.get_or_create(name=country_name, country_iso_code=iso_code)
+
+        domain_name = urlparse(url[0]).netloc
+        domain = Domain.objects.get_or_create(name=domain_name)
+
+        if body['isPhishing']:
+            domain[0].frequency += 1 
+            domain[0].save()
+
+        Message.objects.create(
+            url=url[0],
+            considered_phishing=body['isPhishing'],
+            country=country[0],
+            domain=domain[0]
+        )
+
+        return Response(
+                data={"result": True},
+                status=HTTP_200_OK
+            )
+   
