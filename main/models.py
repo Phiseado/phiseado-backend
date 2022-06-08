@@ -20,7 +20,7 @@ class Domain(models.Model):
 
 class Country(models.Model):
     name = models.CharField(max_length=255)
-    phone_prefix = models.CharField(max_length=255)
+    country_iso_code = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name + " " + self.phone_prefix
+        return self.name + " " + self.country_iso_code
