@@ -61,3 +61,8 @@ class obtain_phishing_message(generics.CreateAPIView):
                 status=HTTP_200_OK
             )
    
+class domain_list(generics.ListAPIView):
+    serializer_class = serializers.DomainSerializer
+
+    def get_queryset(self):
+        return Domain.objects.all()
