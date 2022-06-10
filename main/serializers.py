@@ -6,3 +6,7 @@ class CheckUrlSerializer(serializers.Serializer):
 class DomainSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
     frequency = serializers.IntegerField()
+
+class PieChartSerializer(serializers.Serializer):
+    phishing = serializers.IntegerField()
+    non_phishing = serializers.IntegerField()
