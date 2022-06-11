@@ -1,3 +1,4 @@
+from main.services.url_model import UrlModel
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.status import (
@@ -16,8 +17,6 @@ from datetime import datetime
 from datetime import timedelta
 
 class check_url_blacklist(generics.CreateAPIView):
-    serializer_class = serializers.CheckUrlSerializer
-
     @csrf_exempt
     def post(self, request):
         body = request.data
@@ -34,8 +33,6 @@ class check_url_blacklist(generics.CreateAPIView):
             )
 
 class obtain_phishing_message(generics.CreateAPIView):
-    serializer_class = serializers.CheckUrlSerializer
-
     @csrf_exempt
     def post(self, request):
         body = request.data
@@ -88,3 +85,16 @@ class bar_chart(generics.ListAPIView):
     def get_queryset(self):
         return Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
         
+class retrain_url_model(generics.CreateAPIView):
+    @csrf_exempt
+    def post(self, request):
+        from .apps import URL_model
+        new_messages = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30))
+        URL_model = UrlModel().retrain_url_model(new_messages)
+
+        return Response(
+            data={"result": True},
+            status=HTTP_200_OK
+        )
+
+    

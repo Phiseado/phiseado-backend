@@ -3,6 +3,8 @@ from sklearn import model_selection
 from sklearn.tree import DecisionTreeClassifier
 from urllib.parse import urlparse
 from ..utils import url_properties, multithread
+from datetime import datetime
+from datetime import timedelta
 class UrlModel():
 
     def __init__(self):
@@ -24,6 +26,17 @@ class UrlModel():
         clasif_Tree.fit(atributos_entrenamiento, objetivo_entrenamiento)
         return clasif_Tree
 
+    def retrain_url_model(self, new_messages):
+        with open('input_data/dataset_url.csv', 'a') as f:
+            for message in new_messages:
+                url_properties = calculate_url_properties(message.url)
+                string_url_list = [str(element) for element in url_properties]
+                string_url_properties = ",".join(string_url_list)
+                f.write(string_url_properties + '\n')
+
+        retraining_model = UrlModel()
+        return retraining_model
+        
 
 def obtain_url_properties(url):
     properties = url_properties.get_number_of_each_property(url)
@@ -113,7 +126,11 @@ def get_properties_multithread(url):
 
 def predict_incoming_url(url):
     from ..apps import URL_model
-    
+    incoming_url = calculate_url_properties(url)
+    prediction = URL_model.predict([incoming_url])
+    return prediction
+
+def calculate_url_properties(url):
     incoming_url = []
     url_properties, domain_properties, directory_properties, filename_properties, parameters_properties = get_properties_multithread(url)
     extra_properties = obtain_extra_properties(url)
@@ -124,6 +141,4 @@ def predict_incoming_url(url):
     [incoming_url.append(property) for property in filename_properties]
     [incoming_url.append(property) for property in parameters_properties]
     [incoming_url.append(property) for property in extra_properties]
-
-    prediction = URL_model.predict([incoming_url])
-    return prediction
+    return incoming_url
