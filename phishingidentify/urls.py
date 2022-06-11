@@ -36,5 +36,6 @@ urlpatterns = [
     path('report-message/', views.obtain_phishing_message.as_view()),
     path('domains/', views.domain_list.as_view()),
     path('pie-chart/', views.pie_chart.as_view()),
+    path('bar-chart/', views.bar_chart.as_view()),
     path('swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

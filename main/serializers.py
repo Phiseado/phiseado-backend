@@ -10,3 +10,7 @@ class DomainSerializer(serializers.Serializer):
 class PieChartSerializer(serializers.Serializer):
     phishing = serializers.IntegerField()
     non_phishing = serializers.IntegerField()
+
+class BarChartSerializer(serializers.Serializer):
+    country__name = serializers.CharField(max_length=200)
+    total = serializers.IntegerField()

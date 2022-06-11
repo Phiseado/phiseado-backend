@@ -11,6 +11,9 @@ import re
 from .models import *
 import pytz
 from urllib.parse import urlparse
+from django.db.models import Count
+from datetime import datetime
+from datetime import timedelta
 
 class check_url_blacklist(generics.CreateAPIView):
     serializer_class = serializers.CheckUrlSerializer
@@ -79,3 +82,9 @@ class pie_chart(generics.ListAPIView):
             status=HTTP_200_OK
         )
 
+class bar_chart(generics.ListAPIView):
+    serializer_class = serializers.BarChartSerializer
+
+    def get_queryset(self):
+        return Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+        
