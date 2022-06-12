@@ -161,7 +161,10 @@ def number_redirects(url):
         return -1
 
 def is_indexed_google(url):
-    query = "site:" + url
-    for result in search(query, pause=1):
-        return 1
-    return 0
+    try:
+        query = "site:" + url
+        for result in search(query, pause=1):
+            return 1
+        return 0
+    except:
+        return 0

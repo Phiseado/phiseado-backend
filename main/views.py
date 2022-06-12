@@ -17,6 +17,8 @@ from datetime import datetime
 from datetime import timedelta
 
 class check_url_blacklist(generics.CreateAPIView):
+    serializer_class = serializers.CheckUrlSerializer
+
     @csrf_exempt
     def post(self, request):
         body = request.data
@@ -33,6 +35,8 @@ class check_url_blacklist(generics.CreateAPIView):
             )
 
 class obtain_phishing_message(generics.CreateAPIView):
+    serializer_class = serializers.CheckUrlSerializer
+
     @csrf_exempt
     def post(self, request):
         body = request.data
@@ -86,9 +90,11 @@ class bar_chart(generics.ListAPIView):
         return Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
         
 class retrain_url_model(generics.CreateAPIView):
+    serializer_class = serializers.CheckUrlSerializer
+    
     @csrf_exempt
     def post(self, request):
-        from .apps import URL_model
+        global URL_model
         new_messages = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30))
         URL_model = UrlModel().retrain_url_model(new_messages)
 
