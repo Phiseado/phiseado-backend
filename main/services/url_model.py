@@ -32,8 +32,7 @@ class UrlModel():
                 url_properties = calculate_url_properties(message.url)
                 string_url_list = [str(element) for element in url_properties]
                 string_url_properties = ",".join(string_url_list)
-                f.write(string_url_properties + '\n')
-
+                f.write('\n' + string_url_properties + ',' + ("1" if message.considered_phishing else "0"))
         retraining_model = UrlModel()
         return retraining_model
         
