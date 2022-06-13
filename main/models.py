@@ -3,7 +3,7 @@ from django.db import models
 class Message(models.Model):
     url = models.URLField()
     registered_date = models.DateTimeField(auto_now_add=True)
-    considered_phishing = models.BooleanField(default=False)    
+    considered_phishing = models.BooleanField(default=False)   
 
     domain = models.ForeignKey('Domain', on_delete=models.CASCADE)
     country = models.ForeignKey('Country', on_delete=models.CASCADE)

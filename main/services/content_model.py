@@ -1,5 +1,3 @@
-from email.utils import format_datetime
-from numpy import identity
 import pandas
 from sklearn import model_selection
 from sklearn.tree import DecisionTreeClassifier
@@ -10,10 +8,13 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 class ContentModel():
-
-    def __init__(self):
-        self.model = self.create_and_train_model()
     
+    def __init__(self):
+        '''
+        This class is used to train the model and to predict if a message is phishing or not.
+        '''
+        self.model = self.create_and_train_model()
+
     def create_and_train_model(self):
         input_file = 'input_data/dataset_content.csv'
         urls = pandas.read_csv(input_file, header=0)

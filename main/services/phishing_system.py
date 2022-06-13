@@ -5,7 +5,7 @@ def check_message(message):
     url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
     if len(url) == 0:
         return False
-    
+
     url = url[0]
 
     if googleapi.check_url(url):

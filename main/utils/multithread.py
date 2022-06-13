@@ -3,6 +3,9 @@ from threading import Thread
 class ThreadWithReturnValue(Thread):
     def __init__(self, group=None, target=None, name=None,
                  args=(), kwargs={}, Verbose=None):
+        '''
+        This is for the purpose of returning the value of the thread.
+        '''
         Thread.__init__(self, group, target, name, args, kwargs)
         self._return = None
     def run(self):
