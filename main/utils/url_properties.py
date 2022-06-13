@@ -98,10 +98,10 @@ def get_time_domain_activation(domain):
         if creation_date:
             if isinstance(creation_date, list):
                 creation_date = creation_date[0]
-            return (datetime.datetime.now() - creation_date).days            
+            return (datetime.datetime.now() - creation_date).days          
         else:
             return -1
-    except Exception as e:
+    except:
         return -1
 
 def get_time_domain_expiration(domain):
@@ -143,20 +143,26 @@ def get_tll(domain):
 def has_valid_tls_ssl(url):
     try:
         context = ssl._create_unverified_context()
-        request.urlopen(url, context=context)
-        return 1
+        if url.lower().startswith('https' or 'http'):
+            request.urlopen(url, context=context)
+            return 1
+        else:
+            return 0
     except:
         return 0
 
 def number_redirects(url):
     try:
-        response = request.urlopen(url)
-        num_redirects = 0
-        while response.geturl() != url:
-            num_redirects += 1
-            url = response.geturl()
+        if url.lower().startswith('https' or 'http'):
             response = request.urlopen(url)
-        return num_redirects
+            num_redirects = 0
+            while response.geturl() != url:
+                num_redirects += 1
+                url = response.geturl()
+                response = request.urlopen(url)
+            return num_redirects
+        else:
+            return -1
     except:
         return -1
 

@@ -3,11 +3,12 @@ from sklearn import model_selection
 from sklearn.tree import DecisionTreeClassifier
 from urllib.parse import urlparse
 from ..utils import url_properties, multithread
-from datetime import datetime
-from datetime import timedelta
 class UrlModel():
 
     def __init__(self):
+        '''
+        This class is used to train the model and to predict if a url is phishing or not.
+        '''
         self.model = self.create_and_train_model()
     
     def create_and_train_model(self):
@@ -86,7 +87,7 @@ def obtain_extra_properties(url):
     qty_redirects = multithread.ThreadWithReturnValue(target=url_properties.number_redirects, args=[url])
     url_google_index = multithread.ThreadWithReturnValue(target=url_properties.is_indexed_google, args=[url])
     domain_google_index = multithread.ThreadWithReturnValue(target=url_properties.is_indexed_google, args=[domain])
-    domain_spf.start()  
+    domain_spf.start()
     tls_ssl_certificate.start()
     url_google_index.start()
     qty_redirects.start()

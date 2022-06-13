@@ -28,7 +28,7 @@ def check_url(url):
         ]
       }
     }
-  
+
   response = requests.post(uri, json = body).json()
   return "matches" in response
 
