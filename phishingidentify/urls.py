@@ -37,6 +37,5 @@ urlpatterns = [
     path('domains/', views.domain_list.as_view()),
     path('pie-chart/', views.pie_chart.as_view()),
     path('bar-chart/', views.bar_chart.as_view()),
-    path('retrain-url-model/', views.retrain_url_model.as_view()),
     path('swagger', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
