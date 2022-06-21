@@ -85,5 +85,16 @@ class pie_chart(generics.ListAPIView):
 class bar_chart(generics.ListAPIView):
     serializer_class = serializers.BarChartSerializer
 
-    def get_queryset(self):
-        return Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+    @csrf_exempt
+    def post(self, request):
+        if request.data == "Este mes":
+            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+        elif request.data == "Hoy":
+            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=1)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+        else:
+            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=7)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+
+        return Response(
+            data={"chart": chart},
+            status=HTTP_200_OK
+        )
