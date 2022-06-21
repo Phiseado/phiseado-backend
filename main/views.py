@@ -29,7 +29,7 @@ class check_url_blacklist(generics.CreateAPIView):
             )
         else:
             return Response(
-                data={"result": True if phishing else False},
+                data=phishing,
                 status=HTTP_200_OK
             )
 
@@ -41,7 +41,7 @@ class obtain_phishing_message(generics.CreateAPIView):
         body = request.data
         message = body['message']
         url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
-        iso_code = body['isoCode']
+        iso_code = body['isoCode'].lower()
         country_name = pytz.country_names[iso_code]
         country = Country.objects.get_or_create(name=country_name, country_iso_code=iso_code)
 
