@@ -82,7 +82,7 @@ class pie_chart(generics.ListAPIView):
             status=HTTP_200_OK
         )
 
-class bar_chart(generics.ListAPIView):
+class bar_chart(generics.CreateAPIView):
     serializer_class = serializers.BarChartSerializer
 
     @csrf_exempt
