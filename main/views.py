@@ -47,7 +47,7 @@ class obtain_phishing_message(generics.CreateAPIView):
         if 'message' in body and 'isoCode' in body and 'isPhishing' in body:
             message = body['message']
             url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
-            if len(url) is 0:
+            if len(url) == 0:
                 return Response(
                     status=HTTP_400_BAD_REQUEST
                 )
