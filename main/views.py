@@ -21,47 +21,67 @@ class check_url_blacklist(generics.CreateAPIView):
     @csrf_exempt
     def post(self, request):
         body = request.data
-        message = body['message']
-        phishing = phishing_system.check_message(message)
-        if phishing is None:
-            return Response( 
-                status=HTTP_400_BAD_REQUEST
-            )
+        if 'message' in body:
+            message = body['message']
+            phishing = phishing_system.check_message(message)
+            if phishing is None:
+                return Response( 
+                    status=HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    data=phishing,
+                    status=HTTP_200_OK
+                )
         else:
             return Response(
-                data=phishing,
-                status=HTTP_200_OK
+                status=HTTP_400_BAD_REQUEST
             )
 
 class obtain_phishing_message(generics.CreateAPIView):
-    serializer_class = serializers.CheckUrlSerializer
+    serializer_class = serializers.ReportMessageSerializer
 
     @csrf_exempt
     def post(self, request):
         body = request.data
-        message = body['message']
-        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
-        iso_code = body['isoCode'].lower()
-        country_name = pytz.country_names[iso_code]
-        country = Country.objects.get_or_create(name=country_name, country_iso_code=iso_code)
+        if 'message' in body and 'isoCode' in body and 'isPhishing' in body:
+            message = body['message']
+            url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message)
+            if len(url) is 0:
+                return Response(
+                    status=HTTP_400_BAD_REQUEST
+                )
+            iso_code = body['isoCode'].lower()
+            try:
+                country_name = pytz.country_names[iso_code]
+            except KeyError:
+                return Response(
+                    status=HTTP_400_BAD_REQUEST
+                )
+            country = Country.objects.get_or_create(name=country_name, country_iso_code=iso_code)
 
-        domain_name = urlparse(url[0]).netloc
-        domain = Domain.objects.get_or_create(name=domain_name)
+            domain_name = urlparse(url[0]).netloc
+            domain = Domain.objects.get_or_create(name=domain_name)
 
-        if body['isPhishing']:
-            domain[0].frequency += 1
-            domain[0].save()
+            if body['isPhishing']:
+                domain[0].frequency += 1
+                domain[0].save()
 
-        Message.objects.create(
-            url=url[0],
-            considered_phishing=body['isPhishing'],
-            country=country[0],
-            domain=domain[0]
-        )
+            Message.objects.create(
+                url=url[0],
+                considered_phishing=body['isPhishing'],
+                country=country[0],
+                domain=domain[0]
+            )
 
-        return Response(
-                data={"result": True},
-                status=HTTP_200_OK
+            return Response(
+                    data={"result": True},
+                    status=HTTP_200_OK
+                )
+
+        else:
+            return Response(
+                status=HTTP_400_BAD_REQUEST
             )
 
 class domain_list(generics.ListAPIView):
@@ -87,13 +107,20 @@ class bar_chart(generics.CreateAPIView):
 
     @csrf_exempt
     def post(self, request):
-        if request.data['filter'] == "Este mes":
-            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
-        elif request.data['filter'] == "Hoy":
-            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=1)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+        if 'filter' in request.data:
+            if request.data['filter'] == "Este mes":
+                chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=30)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+            elif request.data['filter'] == "Hoy":
+                chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=1)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+            elif request.data['filter'] == "Esta semana":
+                chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=7)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
+            else:
+                return Response(
+                    status=HTTP_400_BAD_REQUEST)
+            return Response(
+                data={"chart": chart},
+                status=HTTP_200_OK
+            )
         else:
-            chart = Message.objects.filter(registered_date__gt=datetime.now() - timedelta(days=7)).filter(considered_phishing=True).values('country__name').annotate(total=Count('country__name')).order_by('-total')[:3]
-        return Response(
-            data={"chart": chart},
-            status=HTTP_200_OK
-        )
+            return Response(
+                status=HTTP_400_BAD_REQUEST)
